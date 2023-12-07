@@ -1,0 +1,32 @@
+---
+- name: Configure Load Balancer
+  hosts: loadbalancers
+  become: true
+  tasks:
+    - name: Install HAProxy
+      apt:
+        name: haproxy
+        state: present
+
+    - name: Configure HAProxy
+      template:
+        src: haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+      notify: Restart HAProxy
+
+  handlers:
+    - name: Restart HAProxy
+      service:
+        name: haproxy
+        state: restarted
+
+- name: Configure Web Servers
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Install Apache (or your web server of choice)
+      apt:
+        name: apache2
+        state: present
+
+   
